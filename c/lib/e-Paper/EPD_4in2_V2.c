@@ -72,7 +72,7 @@ const unsigned char LUT_ALL[233]={
 function :	Software reset
 parameter:
 ******************************************************************************/
-static void EPD_4IN2_V2_Reset(void)
+static void EPD_Reset(void)
 {
     DEV_Digital_Write(EPD_RST_PIN, 1);
     DEV_Delay_ms(100);
@@ -87,7 +87,7 @@ function :	send command
 parameter:
      Reg : Command register
 ******************************************************************************/
-static void EPD_4IN2_V2_SendCommand(UBYTE Reg)
+static void EPD_SendCommand(UBYTE Reg)
 {
     DEV_Digital_Write(EPD_DC_PIN, 0);
     DEV_Digital_Write(EPD_CS_PIN, 0);
@@ -100,7 +100,7 @@ function :	send data
 parameter:
     Data : Write data
 ******************************************************************************/
-static void EPD_4IN2_V2_SendData(UBYTE Data)
+static void EPD_SendData(UBYTE Data)
 {
     DEV_Digital_Write(EPD_DC_PIN, 1);
     DEV_Digital_Write(EPD_CS_PIN, 0);
@@ -112,7 +112,7 @@ static void EPD_4IN2_V2_SendData(UBYTE Data)
 function :	Wait until the busy_pin goes LOW
 parameter:
 ******************************************************************************/
-void EPD_4IN2_V2_ReadBusy(void)
+void EPD_ReadBusy(void)
 {
     Debug("e-Paper busy\r\n");
     while(DEV_Digital_Read(EPD_BUSY_PIN) == 1) {      //LOW: idle, HIGH: busy
@@ -125,285 +125,285 @@ void EPD_4IN2_V2_ReadBusy(void)
 function :	Turn On Display
 parameter:
 ******************************************************************************/
-static void EPD_4IN2_V2_TurnOnDisplay(void)
+static void EPD_TurnOnDisplay(void)
 {
-    EPD_4IN2_V2_SendCommand(0x22);
-	EPD_4IN2_V2_SendData(0xF7);
-    EPD_4IN2_V2_SendCommand(0x20);
-    EPD_4IN2_V2_ReadBusy();
+    EPD_SendCommand(0x22);
+	EPD_SendData(0xF7);
+    EPD_SendCommand(0x20);
+    EPD_ReadBusy();
 }
 
-static void EPD_4IN2_V2_TurnOnDisplay_Fast(void)
+static void EPD_TurnOnDisplay_Fast(void)
 {
-    EPD_4IN2_V2_SendCommand(0x22);
-	EPD_4IN2_V2_SendData(0xC7);
-    EPD_4IN2_V2_SendCommand(0x20);
-    EPD_4IN2_V2_ReadBusy();
+    EPD_SendCommand(0x22);
+	EPD_SendData(0xC7);
+    EPD_SendCommand(0x20);
+    EPD_ReadBusy();
 }
 
-static void EPD_4IN2_V2_TurnOnDisplay_Partial(void)
+static void EPD_TurnOnDisplay_Partial(void)
 {
-    EPD_4IN2_V2_SendCommand(0x22);
-	EPD_4IN2_V2_SendData(0xFF);
-    EPD_4IN2_V2_SendCommand(0x20);
-    EPD_4IN2_V2_ReadBusy();
+    EPD_SendCommand(0x22);
+	EPD_SendData(0xFF);
+    EPD_SendCommand(0x20);
+    EPD_ReadBusy();
 }
 
-static void EPD_4IN2_V2_TurnOnDisplay_4Gray(void)
+static void EPD_TurnOnDisplay_4Gray(void)
 {
-    EPD_4IN2_V2_SendCommand(0x22);
-	EPD_4IN2_V2_SendData(0xCF);
-    EPD_4IN2_V2_SendCommand(0x20);
-    EPD_4IN2_V2_ReadBusy();
+    EPD_SendCommand(0x22);
+	EPD_SendData(0xCF);
+    EPD_SendCommand(0x20);
+    EPD_ReadBusy();
 }
 
 /******************************************************************************
 function :	Setting the display window
 parameter:
 ******************************************************************************/
-static void EPD_4IN2_V2_SetWindows(UWORD Xstart, UWORD Ystart, UWORD Xend, UWORD Yend)
+static void EPD_SetWindows(UWORD Xstart, UWORD Ystart, UWORD Xend, UWORD Yend)
 {
-    EPD_4IN2_V2_SendCommand(0x44); // SET_RAM_X_ADDRESS_START_END_POSITION
-    EPD_4IN2_V2_SendData((Xstart>>3) & 0xFF);
-    EPD_4IN2_V2_SendData((Xend>>3) & 0xFF);
+    EPD_SendCommand(0x44); // SET_RAM_X_ADDRESS_START_END_POSITION
+    EPD_SendData((Xstart>>3) & 0xFF);
+    EPD_SendData((Xend>>3) & 0xFF);
 	
-    EPD_4IN2_V2_SendCommand(0x45); // SET_RAM_Y_ADDRESS_START_END_POSITION
-    EPD_4IN2_V2_SendData(Ystart & 0xFF);
-    EPD_4IN2_V2_SendData((Ystart >> 8) & 0xFF);
-    EPD_4IN2_V2_SendData(Yend & 0xFF);
-    EPD_4IN2_V2_SendData((Yend >> 8) & 0xFF);
+    EPD_SendCommand(0x45); // SET_RAM_Y_ADDRESS_START_END_POSITION
+    EPD_SendData(Ystart & 0xFF);
+    EPD_SendData((Ystart >> 8) & 0xFF);
+    EPD_SendData(Yend & 0xFF);
+    EPD_SendData((Yend >> 8) & 0xFF);
 }
 
 /******************************************************************************
 function :	Set Cursor
 parameter:
 ******************************************************************************/
-static void EPD_4IN2_V2_SetCursor(UWORD Xstart, UWORD Ystart)
+static void EPD_SetCursor(UWORD Xstart, UWORD Ystart)
 {
-    EPD_4IN2_V2_SendCommand(0x4E); // SET_RAM_X_ADDRESS_COUNTER
-    EPD_4IN2_V2_SendData(Xstart & 0xFF);
+    EPD_SendCommand(0x4E); // SET_RAM_X_ADDRESS_COUNTER
+    EPD_SendData(Xstart & 0xFF);
 
-    EPD_4IN2_V2_SendCommand(0x4F); // SET_RAM_Y_ADDRESS_COUNTER
-    EPD_4IN2_V2_SendData(Ystart & 0xFF);
-    EPD_4IN2_V2_SendData((Ystart >> 8) & 0xFF);
+    EPD_SendCommand(0x4F); // SET_RAM_Y_ADDRESS_COUNTER
+    EPD_SendData(Ystart & 0xFF);
+    EPD_SendData((Ystart >> 8) & 0xFF);
 }
 
 //LUT download
-static void EPD_4IN2_V2_4Gray_lut(void)
+static void EPD_4Gray_lut(void)
 {
     unsigned char i;
 
     //WS byte 0~152, the content of VS[nX-LUTm], TP[nX], RP[n], SR[nXY], FR[n] and XON[nXY]
-    EPD_4IN2_V2_SendCommand(0x32);					
+    EPD_SendCommand(0x32);					
     for(i=0;i<227;i++)
     {
-        EPD_4IN2_V2_SendData(LUT_ALL[i]);
+        EPD_SendData(LUT_ALL[i]);
     }	
     //WS byte 153, the content of Option for LUT end	
-    EPD_4IN2_V2_SendCommand(0x3F);					
-    EPD_4IN2_V2_SendData(LUT_ALL[i++]);
+    EPD_SendCommand(0x3F);					
+    EPD_SendData(LUT_ALL[i++]);
 
     //WS byte 154, the content of gate leve
-    EPD_4IN2_V2_SendCommand(0x03);					
-    EPD_4IN2_V2_SendData(LUT_ALL[i++]);//VGH
+    EPD_SendCommand(0x03);					
+    EPD_SendData(LUT_ALL[i++]);//VGH
 
     //WS byte 155~157, the content of source level
-    EPD_4IN2_V2_SendCommand(0x04);					
-    EPD_4IN2_V2_SendData(LUT_ALL[i++]);//VSH1
-    EPD_4IN2_V2_SendData(LUT_ALL[i++]);//VSH2
-    EPD_4IN2_V2_SendData(LUT_ALL[i++]);//VSL
+    EPD_SendCommand(0x04);					
+    EPD_SendData(LUT_ALL[i++]);//VSH1
+    EPD_SendData(LUT_ALL[i++]);//VSH2
+    EPD_SendData(LUT_ALL[i++]);//VSL
 
     //WS byte 158, the content of VCOM level
-    EPD_4IN2_V2_SendCommand(0x2c);					
-    EPD_4IN2_V2_SendData(LUT_ALL[i++]);//VCOM
+    EPD_SendCommand(0x2c);					
+    EPD_SendData(LUT_ALL[i++]);//VCOM
 }
 
 /******************************************************************************
 function :	Initialize the e-Paper register
 parameter:
 ******************************************************************************/
-void EPD_4IN2_V2_Init(void)
+void EPD_Init(void)
 {
-    EPD_4IN2_V2_Reset();
+    EPD_Reset();
 
-    EPD_4IN2_V2_ReadBusy();   
-    EPD_4IN2_V2_SendCommand(0x12);   // soft  reset
-    EPD_4IN2_V2_ReadBusy();
+    EPD_ReadBusy();   
+    EPD_SendCommand(0x12);   // soft  reset
+    EPD_ReadBusy();
 
-    EPD_4IN2_V2_SendCommand(0x21); //  Display update control
-    EPD_4IN2_V2_SendData(0x40);		
-    EPD_4IN2_V2_SendData(0x00);		
+    EPD_SendCommand(0x21); //  Display update control
+    EPD_SendData(0x40);		
+    EPD_SendData(0x00);		
 
-    EPD_4IN2_V2_SendCommand(0x3C); //BorderWavefrom
-    EPD_4IN2_V2_SendData(0x05);
+    EPD_SendCommand(0x3C); //BorderWavefrom
+    EPD_SendData(0x05);
 	
-    EPD_4IN2_V2_SendCommand(0x11);	// data  entry  mode
-    EPD_4IN2_V2_SendData(0x03);		// X-mode   
+    EPD_SendCommand(0x11);	// data  entry  mode
+    EPD_SendData(0x03);		// X-mode   
 		
-	EPD_4IN2_V2_SetWindows(0, 0, EPD_4IN2_V2_WIDTH-1, EPD_4IN2_V2_HEIGHT-1);
+	EPD_SetWindows(0, 0, EPD_WIDTH-1, EPD_HEIGHT-1);
 	 
-	EPD_4IN2_V2_SetCursor(0, 0);
+	EPD_SetCursor(0, 0);
 	
-    EPD_4IN2_V2_ReadBusy();
+    EPD_ReadBusy();
 }
 
 /******************************************************************************
 function :	Initialize Fast the e-Paper register
 parameter:
 ******************************************************************************/
-void EPD_4IN2_V2_Init_Fast(UBYTE Mode)
+void EPD_Init_Fast(UBYTE Mode)
 {
-    EPD_4IN2_V2_Reset();
+    EPD_Reset();
 
-    EPD_4IN2_V2_ReadBusy();   
-    EPD_4IN2_V2_SendCommand(0x12);   // soft  reset
-    EPD_4IN2_V2_ReadBusy();
+    EPD_ReadBusy();   
+    EPD_SendCommand(0x12);   // soft  reset
+    EPD_ReadBusy();
 
-    EPD_4IN2_V2_SendCommand(0x21);	 
-    EPD_4IN2_V2_SendData(0x40);
-    EPD_4IN2_V2_SendData(0x00); 
+    EPD_SendCommand(0x21);	 
+    EPD_SendData(0x40);
+    EPD_SendData(0x00); 
 
-    EPD_4IN2_V2_SendCommand(0x3C);     
-    EPD_4IN2_V2_SendData(0x05);  
+    EPD_SendCommand(0x3C);     
+    EPD_SendData(0x05);  
 
     if(Mode == Seconds_1_5S)
     {
         //1.5s
-        EPD_4IN2_V2_SendCommand(0x1A); // Write to temperature register
-        EPD_4IN2_V2_SendData(0x6E);		
+        EPD_SendCommand(0x1A); // Write to temperature register
+        EPD_SendData(0x6E);		
     }
     else if(Mode == Seconds_1S)
     {
         //1s
-        EPD_4IN2_V2_SendCommand(0x1A); // Write to temperature register
-        EPD_4IN2_V2_SendData(0x5A);	
+        EPD_SendCommand(0x1A); // Write to temperature register
+        EPD_SendData(0x5A);	
     }
                  
-    EPD_4IN2_V2_SendCommand(0x22); // Load temperature value
-    EPD_4IN2_V2_SendData(0x91);		
-    EPD_4IN2_V2_SendCommand(0x20);	
-    EPD_4IN2_V2_ReadBusy();   
+    EPD_SendCommand(0x22); // Load temperature value
+    EPD_SendData(0x91);		
+    EPD_SendCommand(0x20);	
+    EPD_ReadBusy();   
 	
-    EPD_4IN2_V2_SendCommand(0x11);	// data  entry  mode
-    EPD_4IN2_V2_SendData(0x03);		// X-mode   
+    EPD_SendCommand(0x11);	// data  entry  mode
+    EPD_SendData(0x03);		// X-mode   
 		
-	EPD_4IN2_V2_SetWindows(0, 0, EPD_4IN2_V2_WIDTH-1, EPD_4IN2_V2_HEIGHT-1);
+	EPD_SetWindows(0, 0, EPD_WIDTH-1, EPD_HEIGHT-1);
 	 
-	EPD_4IN2_V2_SetCursor(0, 0);
+	EPD_SetCursor(0, 0);
 	
-    EPD_4IN2_V2_ReadBusy();
+    EPD_ReadBusy();
 }
 
 
-void EPD_4IN2_V2_Init_4Gray(void)
+void EPD_Init_4Gray(void)
 {
-    EPD_4IN2_V2_Reset();
+    EPD_Reset();
 
-    EPD_4IN2_V2_SendCommand(0x12);  //SWRESET
-    EPD_4IN2_V2_ReadBusy();   
+    EPD_SendCommand(0x12);  //SWRESET
+    EPD_ReadBusy();   
 
-    EPD_4IN2_V2_SendCommand(0x21);	 
-    EPD_4IN2_V2_SendData(0x00);
-    EPD_4IN2_V2_SendData(0x00);
+    EPD_SendCommand(0x21);	 
+    EPD_SendData(0x00);
+    EPD_SendData(0x00);
 
-    EPD_4IN2_V2_SendCommand(0x3C);     
-    EPD_4IN2_V2_SendData(0x03);
+    EPD_SendCommand(0x3C);     
+    EPD_SendData(0x03);
 
-    EPD_4IN2_V2_SendCommand(0x0C); //BTST
-    EPD_4IN2_V2_SendData(0x8B);//8B
-    EPD_4IN2_V2_SendData(0x9C);//9C
-    EPD_4IN2_V2_SendData(0xA4);//96 A4
-    EPD_4IN2_V2_SendData(0x0F);//0F	
+    EPD_SendCommand(0x0C); //BTST
+    EPD_SendData(0x8B);//8B
+    EPD_SendData(0x9C);//9C
+    EPD_SendData(0xA4);//96 A4
+    EPD_SendData(0x0F);//0F	
 
-    EPD_4IN2_V2_4Gray_lut(); //LUT
+    EPD_4Gray_lut(); //LUT
 
-    EPD_4IN2_V2_SendCommand(0x11);	// data  entry  mode
-    EPD_4IN2_V2_SendData(0x03);		// X-mode   
+    EPD_SendCommand(0x11);	// data  entry  mode
+    EPD_SendData(0x03);		// X-mode   
 		
-	EPD_4IN2_V2_SetWindows(0, 0, EPD_4IN2_V2_WIDTH-1, EPD_4IN2_V2_HEIGHT-1);
+	EPD_SetWindows(0, 0, EPD_WIDTH-1, EPD_HEIGHT-1);
 	 
-	EPD_4IN2_V2_SetCursor(0, 0);
+	EPD_SetCursor(0, 0);
 }
 /******************************************************************************
 function :	Clear screen
 parameter:
 ******************************************************************************/
-void EPD_4IN2_V2_Clear(void)
+void EPD_Clear(void)
 {
     UWORD Width, Height;
-    Width = (EPD_4IN2_V2_WIDTH % 8 == 0)? (EPD_4IN2_V2_WIDTH / 8 ): (EPD_4IN2_V2_WIDTH / 8 + 1);
-    Height = EPD_4IN2_V2_HEIGHT;
+    Width = (EPD_WIDTH % 8 == 0)? (EPD_WIDTH / 8 ): (EPD_WIDTH / 8 + 1);
+    Height = EPD_HEIGHT;
 
-    EPD_4IN2_V2_SendCommand(0x24);
+    EPD_SendCommand(0x24);
     for (UWORD j = 0; j < Height; j++) {
         for (UWORD i = 0; i < Width; i++) {
-            EPD_4IN2_V2_SendData(0xFF);
+            EPD_SendData(0xFF);
         }
     }
 
-    EPD_4IN2_V2_SendCommand(0x26);
+    EPD_SendCommand(0x26);
     for (UWORD j = 0; j < Height; j++) {
         for (UWORD i = 0; i < Width; i++) {
-            EPD_4IN2_V2_SendData(0xFF);
+            EPD_SendData(0xFF);
         }
     }
-    EPD_4IN2_V2_TurnOnDisplay();
+    EPD_TurnOnDisplay();
 }
 
 /******************************************************************************
 function :	Sends the image buffer in RAM to e-Paper and displays
 parameter:
 ******************************************************************************/
-void EPD_4IN2_V2_Display(UBYTE *Image)
+void EPD_Display(UBYTE *Image)
 {
     UWORD Width, Height;
-    Width = (EPD_4IN2_V2_WIDTH % 8 == 0)? (EPD_4IN2_V2_WIDTH / 8 ): (EPD_4IN2_V2_WIDTH / 8 + 1);
-    Height = EPD_4IN2_V2_HEIGHT;
+    Width = (EPD_WIDTH % 8 == 0)? (EPD_WIDTH / 8 ): (EPD_WIDTH / 8 + 1);
+    Height = EPD_HEIGHT;
 
-    EPD_4IN2_V2_SendCommand(0x24);
+    EPD_SendCommand(0x24);
     for (UWORD j = 0; j < Height; j++) {
         for (UWORD i = 0; i < Width; i++) {
-            EPD_4IN2_V2_SendData(Image[i + j * Width]);
+            EPD_SendData(Image[i + j * Width]);
         }
     }
 
-    EPD_4IN2_V2_SendCommand(0x26);
+    EPD_SendCommand(0x26);
     for (UWORD j = 0; j < Height; j++) {
         for (UWORD i = 0; i < Width; i++) {
-            EPD_4IN2_V2_SendData(Image[i + j * Width]);
+            EPD_SendData(Image[i + j * Width]);
         }
     }
-    EPD_4IN2_V2_TurnOnDisplay();
+    EPD_TurnOnDisplay();
 }
 
 /******************************************************************************
 function :	Sends the image buffer in RAM to e-Paper and fast displays
 parameter:
 ******************************************************************************/
-void EPD_4IN2_V2_Display_Fast(UBYTE *Image)
+void EPD_Display_Fast(UBYTE *Image)
 {
     UWORD Width, Height;
-    Width = (EPD_4IN2_V2_WIDTH % 8 == 0)? (EPD_4IN2_V2_WIDTH / 8 ): (EPD_4IN2_V2_WIDTH / 8 + 1);
-    Height = EPD_4IN2_V2_HEIGHT;
+    Width = (EPD_WIDTH % 8 == 0)? (EPD_WIDTH / 8 ): (EPD_WIDTH / 8 + 1);
+    Height = EPD_HEIGHT;
 
-    EPD_4IN2_V2_SendCommand(0x24);
+    EPD_SendCommand(0x24);
     for (UWORD j = 0; j < Height; j++) {
         for (UWORD i = 0; i < Width; i++) {
-            EPD_4IN2_V2_SendData(Image[i + j * Width]);
+            EPD_SendData(Image[i + j * Width]);
         }
     }
 
-    EPD_4IN2_V2_SendCommand(0x26);
+    EPD_SendCommand(0x26);
     for (UWORD j = 0; j < Height; j++) {
         for (UWORD i = 0; i < Width; i++) {
-            EPD_4IN2_V2_SendData(Image[i + j * Width]);
+            EPD_SendData(Image[i + j * Width]);
         }
     }
-    EPD_4IN2_V2_TurnOnDisplay_Fast();
+    EPD_TurnOnDisplay_Fast();
 }
 
 
-void EPD_4IN2_V2_Display_4Gray(UBYTE *Image)
+void EPD_Display_4Gray(UBYTE *Image)
 {
     UDOUBLE i,j,k,m;
     UBYTE temp1,temp2,temp3;
@@ -412,17 +412,17 @@ void EPD_4IN2_V2_Display_4Gray(UBYTE *Image)
 0x10|  01     01     00     00
 0x13|  01     00     01     00
 *********************************/
-	EPD_4IN2_V2_SendCommand(0x24);	       
+	EPD_SendCommand(0x24);	       
 	// EPD_4IN2_HEIGHT
 	// EPD_4IN2_WIDTH
-	for(m = 0; m<EPD_4IN2_V2_HEIGHT;m++)
-		for(i=0;i<EPD_4IN2_V2_WIDTH/8;i++)
+	for(m = 0; m<EPD_HEIGHT;m++)
+		for(i=0;i<EPD_WIDTH/8;i++)
 		{
 			temp3=0;
 			for(j=0;j<2;j++)	
 			{
 				
-				temp1 = Image[(m*(EPD_4IN2_V2_WIDTH/8)+i)*2+j];
+				temp1 = Image[(m*(EPD_WIDTH/8)+i)*2+j];
 				for(k=0;k<2;k++)	
 				{
 					temp2 = temp1&0xC0 ;
@@ -453,17 +453,17 @@ void EPD_4IN2_V2_Display_4Gray(UBYTE *Image)
 				}
 				
 			 }
-			EPD_4IN2_V2_SendData(temp3);			
+			EPD_SendData(temp3);			
 		}
     // new  data
-    EPD_4IN2_V2_SendCommand(0x26);	 
-	for(m = 0; m<EPD_4IN2_V2_HEIGHT;m++)
-		for(i=0;i<EPD_4IN2_V2_WIDTH/8;i++)
+    EPD_SendCommand(0x26);	 
+	for(m = 0; m<EPD_HEIGHT;m++)
+		for(i=0;i<EPD_WIDTH/8;i++)
 		{
 			temp3=0;
 			for(j=0;j<2;j++)	
 			{
-				temp1 = Image[(m*(EPD_4IN2_V2_WIDTH/8)+i)*2+j];
+				temp1 = Image[(m*(EPD_WIDTH/8)+i)*2+j];
 				for(k=0;k<2;k++)	
 				{
 					temp2 = temp1&0xC0 ;
@@ -494,48 +494,48 @@ void EPD_4IN2_V2_Display_4Gray(UBYTE *Image)
 				}
 				
 			 }
-			EPD_4IN2_V2_SendData(temp3);	
+			EPD_SendData(temp3);	
 		}
-    EPD_4IN2_V2_TurnOnDisplay_4Gray();
+    EPD_TurnOnDisplay_4Gray();
 }
 
 // Send partial data for partial refresh
-void EPD_4IN2_V2_PartialDisplay(UBYTE *Image, UWORD x, UWORD y, UWORD w, UWORD l)
+void EPD_PartialDisplay(UBYTE *Image, UWORD x, UWORD y, UWORD w, UWORD l)
 {
     UWORD Width, Height;
     Width = (w % 8 == 0)? (w / 8 ): (w / 8 + 1);
     Height = l;
 
-	EPD_4IN2_V2_SendCommand(0x3C); //BorderWavefrom,
-	EPD_4IN2_V2_SendData(0x80);	
+	EPD_SendCommand(0x3C); //BorderWavefrom,
+	EPD_SendData(0x80);	
 
-	EPD_4IN2_V2_SendCommand(0x21); 
-	EPD_4IN2_V2_SendData(0x00);
-	EPD_4IN2_V2_SendData(0x00);
+	EPD_SendCommand(0x21); 
+	EPD_SendData(0x00);
+	EPD_SendData(0x00);
 
-	EPD_4IN2_V2_SendCommand(0x3C); 
-	EPD_4IN2_V2_SendData(0x80); 
+	EPD_SendCommand(0x3C); 
+	EPD_SendData(0x80); 
 
-	EPD_4IN2_V2_SetWindows(x, y, x+w-1, y+l-1);
-	EPD_4IN2_V2_SetCursor(x, y);
+	EPD_SetWindows(x, y, x+w-1, y+l-1);
+	EPD_SetCursor(x, y);
 	
-    EPD_4IN2_V2_SendCommand(0x24);
+    EPD_SendCommand(0x24);
     for (UWORD j = 0; j < Height; j++) {
         for (UWORD i = 0; i < Width; i++) {
-            EPD_4IN2_V2_SendData(Image[i + j * Width]);
+            EPD_SendData(Image[i + j * Width]);
         }
     }
 	
-	EPD_4IN2_V2_TurnOnDisplay_Partial();
+	EPD_TurnOnDisplay_Partial();
 }
 
 /******************************************************************************
 function :	Enter sleep mode
 parameter:
 ******************************************************************************/
-void EPD_4IN2_V2_Sleep(void)
+void EPD_Sleep(void)
 {
-    EPD_4IN2_V2_SendCommand(0x10); // DEEP_SLEEP
-    EPD_4IN2_V2_SendData(0x01);
+    EPD_SendCommand(0x10); // DEEP_SLEEP
+    EPD_SendData(0x01);
 	DEV_Delay_ms(200);
 }

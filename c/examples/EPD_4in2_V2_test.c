@@ -34,56 +34,56 @@
 
 int EPD_4in2_V2_test(void)
 {
-    printf("EPD_4IN2_V2_test Demo\r\n");
+    printf("EPD_test Demo\r\n");
     if(DEV_Module_Init()!=0){
         return -1;
     }
 
     printf("e-Paper Init and Clear...\r\n");
-    EPD_4IN2_V2_Init();
-    EPD_4IN2_V2_Clear();
+    EPD_Init();
+    EPD_Clear();
     DEV_Delay_ms(500);
 
     //Create a new image cache
     UBYTE *BlackImage;
     /* you have to edit the startup_stm32fxxx.s file and set a big enough heap size */
-    UWORD Imagesize = ((EPD_4IN2_V2_WIDTH % 8 == 0)? (EPD_4IN2_V2_WIDTH / 8 ): (EPD_4IN2_V2_WIDTH / 8 + 1)) * EPD_4IN2_V2_HEIGHT;
+    UWORD Imagesize = ((EPD_WIDTH % 8 == 0)? (EPD_WIDTH / 8 ): (EPD_WIDTH / 8 + 1)) * EPD_HEIGHT;
     if((BlackImage = (UBYTE *)malloc(Imagesize)) == NULL) {
         printf("Failed to apply for black memory...\r\n");
         return -1;
     }
     printf("Paint_NewImage\r\n");
-    Paint_NewImage(BlackImage, EPD_4IN2_V2_WIDTH, EPD_4IN2_V2_HEIGHT, 0, WHITE);
+    Paint_NewImage(BlackImage, EPD_WIDTH, EPD_HEIGHT, 0, WHITE);
 
 #if 1  // show bmp
     printf("show window BMP-----------------\r\n");
     Paint_SelectImage(BlackImage);
     Paint_Clear(WHITE);
     GUI_ReadBmp("./pic/100x100.bmp", 10, 10);
-    EPD_4IN2_V2_Display(BlackImage);
+    EPD_Display(BlackImage);
     DEV_Delay_ms(2000);
 
-    // EPD_4IN2_V2_Init_Fast(Seconds_1_5S);
+    // EPD_Init_Fast(Seconds_1_5S);
     // printf("show bmp------------------------\r\n");
     // Paint_SelectImage(BlackImage);
     // GUI_ReadBmp("./pic/4in2.bmp", 0, 0);
-    // EPD_4IN2_V2_Display_Fast(BlackImage);
+    // EPD_Display_Fast(BlackImage);
     // DEV_Delay_ms(2000);
 #endif        
 
 #if 1  // show image for array   
-    EPD_4IN2_V2_Init_Fast(Seconds_1_5S);
+    EPD_Init_Fast(Seconds_1_5S);
     printf("show image for array\r\n");
     Paint_SelectImage(BlackImage);
     Paint_Clear(WHITE);
     Paint_DrawBitMap(gImage_4in2);
-    EPD_4IN2_V2_Display_Fast(BlackImage);
+    EPD_Display_Fast(BlackImage);
     DEV_Delay_ms(2000);
 #endif
 
 #if 1   // Drawing on the image
 
-    EPD_4IN2_V2_Init();
+    EPD_Init();
     //1.Select Image
     printf("SelectImage:BlackImage\r\n");
     Paint_SelectImage(BlackImage);
@@ -110,8 +110,8 @@ int EPD_4in2_V2_test(void)
     Paint_DrawString_CN(130, 20, "微雪电子", &Font24CN, WHITE, BLACK);
 
     printf("EPD_Display\r\n");
-    // EPD_4IN2_V2_Display(BlackImage);
-	EPD_4IN2_V2_Display(BlackImage);
+    // EPD_Display(BlackImage);
+	EPD_Display(BlackImage);
 	DEV_Delay_ms(2000);
 #endif
 
@@ -140,7 +140,7 @@ int EPD_4in2_V2_test(void)
 		}
 		Paint_Clear(WHITE);
 		Paint_DrawTime(20, 10, &sPaint_time, &Font20, WHITE, BLACK);
-		EPD_4IN2_V2_PartialDisplay(BlackImage, 80, 200, 200, 50);
+		EPD_PartialDisplay(BlackImage, 80, 200, 200, 50);
 		DEV_Delay_ms(500);//Analog clock 1s
 		num = num - 1;
 		if(num == 0) {
@@ -151,18 +151,18 @@ int EPD_4in2_V2_test(void)
 
 
 #if 1
-    // EPD_4IN2_V2_Init();
-	// EPD_4IN2_V2_Clear();
-	EPD_4IN2_V2_Init_4Gray();
+    // EPD_Init();
+	// EPD_Clear();
+	EPD_Init_4Gray();
 	printf("show Gray------------------------\r\n");
 	free(BlackImage);
 	BlackImage = NULL;
-	Imagesize = ((EPD_4IN2_V2_WIDTH % 8 == 0)? (EPD_4IN2_V2_WIDTH / 4 ): (EPD_4IN2_V2_WIDTH / 4 + 1)) * EPD_4IN2_V2_HEIGHT;
+	Imagesize = ((EPD_WIDTH % 8 == 0)? (EPD_WIDTH / 4 ): (EPD_WIDTH / 4 + 1)) * EPD_HEIGHT;
     if((BlackImage = (UBYTE *)malloc(Imagesize)) == NULL) {
         printf("Failed to apply for black memory...\r\n");
         return -1;
     }
-	Paint_NewImage(BlackImage, EPD_4IN2_V2_WIDTH, EPD_4IN2_V2_HEIGHT, 0, WHITE);
+	Paint_NewImage(BlackImage, EPD_WIDTH, EPD_HEIGHT, 0, WHITE);
 	Paint_SetScale(4);
 	Paint_Clear(WHITE);
 
@@ -191,28 +191,28 @@ int EPD_4in2_V2_test(void)
     Paint_DrawString_CN(220, 80, "微雪电子", &Font24CN, GRAY3, GRAY2);
     Paint_DrawString_CN(220, 120, "微雪电子", &Font24CN, GRAY4, GRAY1);
 	
-	EPD_4IN2_V2_Display_4Gray(BlackImage);
+	EPD_Display_4Gray(BlackImage);
 	DEV_Delay_ms(2000);
 
 	Paint_Clear(WHITE);
-    EPD_4IN2_V2_Display_4Gray(gImage_4in2_4Gray1);
+    EPD_Display_4Gray(gImage_4in2_4Gray1);
 	DEV_Delay_ms(2000);
 
 	GUI_ReadBmp_4Gray("./pic/4in2_Scale.bmp",0 , 0);
-	EPD_4IN2_V2_Display_4Gray(BlackImage);
+	EPD_Display_4Gray(BlackImage);
 	DEV_Delay_ms(2000);
 	
 	Paint_Clear(WHITE);
     GUI_ReadBmp("./pic/100x100.bmp", 20, 20);
-    EPD_4IN2_V2_Display_4Gray(BlackImage);
+    EPD_Display_4Gray(BlackImage);
 	DEV_Delay_ms(2000);
 
 #endif
 
-    EPD_4IN2_V2_Init();
-    EPD_4IN2_V2_Clear();
+    EPD_Init();
+    EPD_Clear();
     printf("Goto Sleep...\r\n");
-    EPD_4IN2_V2_Sleep();
+    EPD_Sleep();
     free(BlackImage);
     BlackImage = NULL;
     DEV_Delay_ms(2000);//important, at least 2s
