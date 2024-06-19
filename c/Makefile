@@ -5,7 +5,6 @@ DIR_GUI		 = ./lib/GUI
 DIR_Examples = ./examples
 DIR_BIN		 = ./bin
 
-EPD=epd4in2V2
 OBJ_C_EPD = ${DIR_EPD}/EPD_4in2_V2.c
 OBJ_C_Examples = ${DIR_Examples}/EPD_4in2_V2_test.c
 
@@ -39,7 +38,7 @@ JETSON: JETSON_DEV JETSON_epd
 TARGET = epd
 CC = gcc
 MSG = -g -O -ffunction-sections -fdata-sections -Wall
-CFLAGS += $(MSG) -D $(EPD)
+CFLAGS += $(MSG)
 
 RPI_epd:${OBJ_O}
 	echo $(@)

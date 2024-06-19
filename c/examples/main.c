@@ -1,8 +1,12 @@
-﻿#include <stdlib.h>     //exit()
-#include <signal.h>     //signal()
-#include "EPD_Test.h"   //Examples
-#include "EPD_4in2_V2.h"
+#include <stdlib.h>		// malloc() free() exit()
+#include <signal.h>		//signal()
 #include <string.h>
+#include "EPD_4in2_V2.h"
+#include "DEV_Config.h"
+#include "GUI_Paint.h"
+#include "GUI_BMPfile.h"
+#include "ImageData.h"
+#include "Debug.h"
 
 void  Handler(int signo)
 {
@@ -18,19 +22,6 @@ int main(void)
     // Exception handling:ctrl + c
     signal(SIGINT, Handler);
     
-#ifdef epd4in2V2
-    EPD_4in2_V2_test();
-#else
-    printf("Please specify the EPD model when making. \r\n");
-    printf("Example: When you run the EPD_7in5_V2_test() program, input: sudo make clean && make EPD=epd7in5V2 \r\n");
-    printf("Don't know which program you need to run? Refer to the user manual (Wiki) and main.c \r\n");
-#endif
-    
-    return 0;
-}
-
-int EPD_4in2_V2_test(void)
-{
     printf("EPD_test Demo\r\n");
     if(DEV_Module_Init()!=0){
         return -1;
@@ -219,4 +210,3 @@ int EPD_4in2_V2_test(void)
     
     return 0;
 }
-
